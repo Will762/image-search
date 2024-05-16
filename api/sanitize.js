@@ -1,9 +1,11 @@
-import { yolo } from "./handler.js";
+import apiResponses from './apiHandler.js';
 
 export default function handler(request, response) {
-    response.status(200).json({
-        body: request.body,
-        query: request.query,
-        cookies: request.cookies,
-    });
-}
+  const regex = /^[\w\s0-9-_']+/;
+  const sanitizedQuery = request.headers.userquery.match(regex)?.[0];
+
+  if (!sanitizedQuery) return;
+
+  apiResponses(sanitizedQuery, request.headers.page)
+    .then(data => response.json(data));
+}    
