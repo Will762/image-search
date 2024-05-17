@@ -23,9 +23,25 @@ async function searchUnsplash(query, page, per_page = 20) {
   };
 
   const response = await fetch(url, options);
-  const parsedResponse = await response.json();
-  const photos = parsedResponse["results"];
-  return {"unsplash": photos};
+  const json = await response.json();
+  
+  const totalResults = json.total;
+  const photos = json.results.map(photo => {
+    return {
+      id: photo.id,
+      smallURL: photo.urls.small,
+      largeURL: photo.urls.raw,
+      user: photo.user.name,
+      userProfile: photo.links.html,
+      userPic: photo.user.profile_image.large,
+    }
+  });
+
+  return {
+    api: "unsplash",
+    totalResults: totalResults,
+    photos
+  };
 }
 
 async function searchPexels(query, page, per_page = 20) {
@@ -42,9 +58,25 @@ async function searchPexels(query, page, per_page = 20) {
   };
 
   const response = await fetch(url, options);
-  const parsedResponse = await response.json();
-  const photos = parsedResponse["photos"];
-  return {"pexels": photos};
+  const json = await response.json();
+
+  const totalResults = json.total_results;
+  const photos = json.photos.map(photo => {
+    return {
+      id: photo.id,
+      smallURL: photo.src.medium,
+      largeURL: photo.original,
+      user: photo.photographer,
+      userProfile: photo.photographer_url,
+      userPic: photo.userImageURL,
+    }
+  });
+
+  return {
+    api: "pexels",
+    totalResults: totalResults,
+    photos
+  };
 }
 
 async function searchPixabay(query, page, per_page = 20) {
@@ -55,7 +87,23 @@ async function searchPixabay(query, page, per_page = 20) {
   url.searchParams.append("key", process.env.PIXABAY_KEY);
 
   const response = await fetch(url);
-  const parsedResponse = await response.json();
-  const photos = parsedResponse["hits"];
-  return {"pixabay": photos};
+  const json = await response.json();
+  
+  const totalResults = json.total;
+  const photos = json.hits.map(photo => {
+    return {
+      id: photo.id,
+      smallURL: photo.webformatURL,
+      largeURL: photo.largeImageURL,
+      user: photo.user,
+      userProfile: `https://pixabay.com/users/${photo.user}-${photo.user_id}`,
+      userPic: photo.userImageURL,
+    }
+  });
+
+  return {
+    api: "pixabay",
+    totalResults: totalResults,
+    photos,
+  };
 }
