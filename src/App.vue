@@ -3,9 +3,10 @@
 
   let searchTerm = ref('');
   let lastSearched = ref('');
-  let searchDisabled = ref(false);
+  let searchDisabled = ref(true);
   let searchResults = ref(null);
   let page = ref(1);
+  let loading = ref(false);
   const remainingResults = {
     searchUnsplash: Infinity,
     searchPexels: Infinity,
@@ -14,9 +15,10 @@
 
   watch(searchTerm, () => {
     searchDisabled.value = lastSearched.value === searchTerm.value;
+    searchDisabled.value = !searchTerm.value;
   });
 
-  function search() { 
+  function search() {
     const params = new URLSearchParams();
     params.append('userQuery', searchTerm.value);
     params.append('page', page.value);
@@ -30,25 +32,25 @@
       .then((json) => {
         searchResults.value = searchResults.value ? searchResults.value.concat(json) : json;
         json.forEach((api) => {
-          remainingResults[api.value.api] = api.value.totalResults - (page.value * 20); //todo: per_page var?
-          console.log(json);
+          remainingResults[api.value.api] = api.value.totalResults - (page.value * 24); //todo: per_page var?
         });
       });
-    console.log(remainingResults);
   }
 
   function newSearch() {
-      searchResults.value = null;
-      lastSearched.value = searchTerm.value;
-      searchDisabled.value = true;
-      page.value = 1;
-      for (const key of Object.keys(remainingResults)) {
-        remainingResults[key] = Infinity;
-      }
-      search();
+    loading.value = true;    
+    searchResults.value = null;
+    lastSearched.value = searchTerm.value;
+    searchDisabled.value = true;
+    page.value = 1;
+    for (const key of Object.keys(remainingResults)) {
+      remainingResults[key] = Infinity;
+    }
+    search();
   }
 
   function scrollSearch() {
+    loading.value = true;    
     page.value++;
     search();
   }
@@ -56,22 +58,24 @@
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        scrollSearch();
-        // only the relevant APIS?
         observer.disconnect();
+        scrollSearch();
       }
     });
   });
 
   watch(searchResults, () => {
-    if (!searchResults.value) return;
+    loading.value = false;
+    for (const value of Object.values(remainingResults)) {
+      if (value > 0) break;
+      return;
+    }
     const target = document.querySelector('.last-container .last-item');
     if (!target) return;
     observer.observe(target);
   }, {
     flush: 'post'
   });
-
 
 </script>
 
@@ -93,7 +97,9 @@
         v-bind:class="i === api.value.photos.length - 1 ? 'last-item' : ''"
       />
     </span>
+
   </div>
+  <img class="loader" src="./assets/spinner.png" v-if="loading"/>
 
 </template>
 
@@ -104,4 +110,17 @@
     object-fit: cover;
     margin-left: 5px;
   }
+
+  .loader {
+    width: 50px;
+    height: auto;
+    animation: spin .75s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+
 </style>

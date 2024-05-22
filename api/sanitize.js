@@ -8,7 +8,6 @@ export default function handler(request, response) {
   const sanitizedQuery = request.query;
   sanitizedQuery.userQuery = sanitizedUserQuery;
 
-  console.log(request.query);
   apiResponses(sanitizedQuery)
   .then(data => response.json(data));
 

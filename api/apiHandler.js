@@ -10,10 +10,9 @@ export default (query) => {
   }
   return Promise.allSettled(searches).then(results => results);
 }
-const funcObj = {
-  async searchUnsplash(query, page, per_page = 20) {
-    console.log('searching Unsplash');
 
+const funcObj = {
+  async searchUnsplash(query, page, per_page = 24) {
     const url = new URL('https://api.unsplash.com/search/photos');
     url.searchParams.append('query', query);
     url.searchParams.append('page', page);
@@ -48,9 +47,7 @@ const funcObj = {
     };
   },
   
-  async searchPexels(query, page, per_page = 20) {
-    console.log('searching Pexels');
-
+  async searchPexels(query, page, per_page = 24) {
     const url = new URL('https://api.pexels.com/v1/search');
     url.searchParams.append('query', query);
     url.searchParams.append('page', page);
@@ -85,9 +82,7 @@ const funcObj = {
     };
   },
   
-  async searchPixabay(query, page, per_page = 20) {
-    console.log('searching Pixabay')
-
+  async searchPixabay(query, page, per_page = 24) {
     const url = new URL('https://pixabay.com/api/');
     url.searchParams.append('q', query);
     url.searchParams.append('page', page);
