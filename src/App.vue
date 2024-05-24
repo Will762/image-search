@@ -1,5 +1,6 @@
 <script setup>
   import { ref, watch } from 'vue';
+  import Modal from './components/modal.vue';
 
   let searchTerm = ref('');
   let lastSearched = ref('');
@@ -12,6 +13,8 @@
     searchPexels: Infinity,
     searchPixabay: Infinity,
   };
+  let allOut = false;
+  let activeItem = ref(null);
 
   watch(searchTerm, () => {
     searchDisabled.value = lastSearched.value === searchTerm.value;
@@ -19,30 +22,40 @@
   });
 
   function search() {
+    loading.value = true;
+
     const params = new URLSearchParams();
     params.append('userQuery', searchTerm.value);
     params.append('page', page.value);
     for (const [key, value] of Object.entries(remainingResults)) {
       params.append(key, value > 0 ? true : '');
     }
-    
+
     const sanitizeURL = `./api/sanitize.js?${params.toString()}`;
     fetch(sanitizeURL)
       .then((response) => response.json())
       .then((json) => {
         searchResults.value = searchResults.value ? searchResults.value.concat(json) : json;
+        loading.value = false;
+        allOut = false;
+
+        console.log(searchResults.value);
+
         json.forEach((api) => {
           remainingResults[api.value.api] = api.value.totalResults - (page.value * 24); //todo: per_page var?
         });
+        for (const value of Object.values(remainingResults)) {
+          if (value > 0) break;
+          allOut = true;
+        }
       });
   }
 
   function newSearch() {
-    loading.value = true;    
-    searchResults.value = null;
-    lastSearched.value = searchTerm.value;
-    searchDisabled.value = true;
     page.value = 1;
+    searchResults.value = null;
+    searchDisabled.value = true;
+    lastSearched.value = searchTerm.value;
     for (const key of Object.keys(remainingResults)) {
       remainingResults[key] = Infinity;
     }
@@ -50,7 +63,6 @@
   }
 
   function scrollSearch() {
-    loading.value = true;    
     page.value++;
     search();
   }
@@ -65,13 +77,9 @@
   });
 
   watch(searchResults, () => {
-    loading.value = false;
-    for (const value of Object.values(remainingResults)) {
-      if (value > 0) break;
-      return;
-    }
+    if (allOut) return;
+    if (!searchResults.value) return;
     const target = document.querySelector('.last-container .last-item');
-    if (!target) return;
     observer.observe(target);
   }, {
     flush: 'post'
@@ -89,24 +97,38 @@
   <div v-if="searchResults" class="results">
     <span
       v-for="(api, j) in searchResults"
-      v-bind:class="j === searchResults.length - 1 ? 'last-container' : ''"
+      v-bind:class="j === searchResults.length - 1 ? 'last-container' : null"
     >
       <img
         v-for="(photo, i) in api.value.photos"
         v-bind:src="photo.smallURL"
-        v-bind:class="i === api.value.photos.length - 1 ? 'last-item' : ''"
+        v-bind:class="i === api.value.photos.length - 1 ? 'last-item' : null"
+        v-on:click="activeItem = searchResults[j].value.photos[i];console.log(activeItem)"
       />
     </span>
-
   </div>
-  <img class="loader" src="./assets/spinner.png" v-if="loading"/>
+
+  <img v-if="loading" class="loader" src="./assets/spinner.png"/>
+
+  <Modal
+    v-if="activeItem"
+    @close-modal="activeItem = null;"
+    :id="activeItem.id"
+    :smallURL="activeItem.smallURL"
+    :largeURL="activeItem.largeURL"
+    :user="activeItem.user"
+    :userProfile="activeItem.userProfile"
+    :userPic="activeItem.userPic"
+    >
+    <!-- {{ activeItem }} -->
+  </Modal>
 
 </template>
 
 <style scoped>
   img {
-    height: 300px;
-    width: 300px;
+    height: 200px;
+    width: 200px;
     object-fit: cover;
     margin-left: 5px;
   }
@@ -114,11 +136,12 @@
   .loader {
     width: 50px;
     height: auto;
+    margin: 40px;
     animation: spin .75s linear infinite;
   }
 
   @keyframes spin {
-    to {
+    100% {
       rotate: 360deg;
     }
   }

@@ -8,7 +8,7 @@ export default (query) => {
       searches.push(funcObj[key](query.userQuery, query.page));
     }
   }
-  return Promise.allSettled(searches).then(results => results);
+  return Promise.allSettled(searches).then((results) => results);
 }
 
 const funcObj = {
@@ -29,7 +29,7 @@ const funcObj = {
     const json = await response.json();
     
     const totalResults = json.total;
-    const photos = json.results.map(photo => {
+    const photos = json.results.map((photo) => {
       return {
         id: photo.id,
         smallURL: photo.urls.small,
@@ -64,7 +64,7 @@ const funcObj = {
     const json = await response.json();
   
     const totalResults = json.total_results;
-    const photos = json.photos.map(photo => {
+    const photos = json.photos.map((photo) => {
       return {
         id: photo.id,
         smallURL: photo.src.medium,
@@ -83,7 +83,7 @@ const funcObj = {
   },
   
   async searchPixabay(query, page, per_page = 24) {
-    const url = new URL('https://pixabay.com/api/');
+    const url = new URL(`https://pixabay.com/api/`);
     url.searchParams.append('q', query);
     url.searchParams.append('page', page);
     url.searchParams.append('per_page', per_page);
@@ -93,7 +93,7 @@ const funcObj = {
     const json = await response.json();
     
     const totalResults = json.total;
-    const photos = json.hits.map(photo => {
+    const photos = json.hits.map((photo) => {
       return {
         id: photo.id,
         smallURL: photo.webformatURL,
