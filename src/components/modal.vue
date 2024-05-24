@@ -1,10 +1,9 @@
 <script setup>
-  const props = defineProps(['id', 'smallURL', 'largeURL', 'user', 'userProfile', 'userPic'])
+const props = defineProps(['id', 'smallURL', 'largeURL', 'user', 'userProfile', 'userPic'])
 </script>
 
 <template>
   <div class="modal">
-    
     <div class="modal-content">
       <div class="modal-header">
         <button
@@ -15,9 +14,7 @@
       <img :src="props.smallURL">
       <p>{{ props.id }}</p>
       <img :src="props.userPic">
-      <!-- <slot/> -->
     </div>
-
   </div>
 </template>
 

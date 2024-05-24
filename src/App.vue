@@ -1,6 +1,7 @@
 <script setup>
   import { ref, watch } from 'vue';
   import Modal from './components/modal.vue';
+  import SearchResults from './components/SearchResults.vue';
 
   let searchTerm = ref('');
   let lastSearched = ref('');
@@ -94,19 +95,10 @@
     <button class="search" v-bind:disabled="searchDisabled" v-on:click="newSearch">Search</button>
   </form>
 
-  <div v-if="searchResults" class="results">
-    <span
-      v-for="(api, j) in searchResults"
-      v-bind:class="j === searchResults.length - 1 ? 'last-container' : null"
-    >
-      <img
-        v-for="(photo, i) in api.value.photos"
-        v-bind:src="photo.smallURL"
-        v-bind:class="i === api.value.photos.length - 1 ? 'last-item' : null"
-        v-on:click="activeItem = searchResults[j].value.photos[i];console.log(activeItem)"
-      />
-    </span>
-  </div>
+  <SearchResults
+    v-if="searchResults"
+    :searchResults="searchResults"
+  />
 
   <img v-if="loading" class="loader" src="./assets/spinner.png"/>
 
@@ -119,20 +111,12 @@
     :user="activeItem.user"
     :userProfile="activeItem.userProfile"
     :userPic="activeItem.userPic"
-    >
-    <!-- {{ activeItem }} -->
+  >
   </Modal>
 
 </template>
 
 <style scoped>
-  img {
-    height: 200px;
-    width: 200px;
-    object-fit: cover;
-    margin-left: 5px;
-  }
-
   .loader {
     width: 50px;
     height: auto;
