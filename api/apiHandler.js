@@ -28,6 +28,8 @@ const funcObj = {
     const response = await fetch(url, options);
     const json = await response.json();
     
+    console.log(json.results[0].user);
+
     const totalResults = json.total;
     const photos = json.results.map((photo) => {
       return {
@@ -35,7 +37,7 @@ const funcObj = {
         smallURL: photo.urls.small,
         largeURL: photo.urls.raw,
         user: photo.user.name,
-        userProfile: photo.links.html,
+        userProfile: photo.user.links.html,
         userPic: photo.user.profile_image.large,
       }
     });

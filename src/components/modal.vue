@@ -1,47 +1,70 @@
 <script setup>
-const props = defineProps(['id', 'smallURL', 'largeURL', 'user', 'userProfile', 'userPic'])
+const props = defineProps(['id', 'smallURL', 'largeURL', 'user', 'userProfile', 'userPic']);
+const emits = defineEmits(['clearActive']);
 </script>
 
 <template>
-  <div class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button
-          @click="$emit('closeModal')"
-          class="close-modal">&#xd7;
-        </button>
-      </div>
-      <img :src="props.smallURL">
-      <p>{{ props.id }}</p>
-      <img :src="props.userPic">
+  <dialog id="modal">
+    <div class="modal-header">
+      <button
+        class="close-modal"
+        @click="$emit('clearActive')"
+        aria-label="close"
+      >
+        &#xd7;
+      </button>
     </div>
-  </div>
+
+    <div class="modal-content">
+      <a
+        :href="props.largeURL"
+        target="_blank"
+      >
+        <img
+          class="displayImg"
+          :src="props.smallURL"
+        >
+      </a>
+
+      <a
+        :href="props.userProfile"
+        target="_blank"
+      >
+        <p> {{ props.user }}</p>
+        <img
+          class="profileImg"
+          :src="props.userPic"
+        >
+      </a>
+    </div>
+
+  </dialog>
 </template>
 
-
 <style scoped>
-  .modal {
-    position: fixed;
-    inset: 0;
-  }
-
-  .modal-content {
-    background-color: black;
-    max-width: 500px;
-    max-height: 500px;
-    width: 100%;
-    height: 100%;
-    margin: 0 auto;
-    padding: 10px;
+  ::backdrop {
+    background-color: rgba(50, 50, 50, .8);
   }
 
   .modal-header {
     text-align: right;
+    margin-bottom: 1em;
   }
 
   .close-modal {
+    line-height: 1;
     font-size: 20px;
     color: white;
     padding: 10px;
+  }
+
+  .displayImg {
+    width: 100%;
+  }
+
+  .profileImg {
+    max-width: 120px;
+    max-height: 120px;
+    object-fit: cover;
   }
 </style>

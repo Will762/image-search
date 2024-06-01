@@ -1,91 +1,100 @@
 <script setup>
-  import { ref, watch } from 'vue';
-  import Modal from './components/modal.vue';
-  import SearchResults from './components/SearchResults.vue';
+import { ref, watch } from 'vue';
+import Modal from './components/modal.vue';
+import SearchResults from './components/SearchResults.vue';
 
-  let searchTerm = ref('');
-  let lastSearched = ref('');
-  let searchDisabled = ref(true);
-  let searchResults = ref(null);
-  let page = ref(1);
-  let loading = ref(false);
-  const remainingResults = {
-    searchUnsplash: Infinity,
-    searchPexels: Infinity,
-    searchPixabay: Infinity,
-  };
-  let allOut = false;
-  let activeItem = ref(null);
+// Search stuff
+let searchTerm = ref('');
+let lastSearched = ref('');
+let searchDisabled = ref(true);
+let loading = ref(false);
+// Results and pagination
+let searchResults = ref(null);
+let page = ref(1);
+const remainingResults = {
+  searchUnsplash: Infinity,
+  searchPexels: Infinity,
+  searchPixabay: Infinity,
+};
+let allOut = false;
+// Modal
+let activeItem = ref(null);
 
-  watch(searchTerm, () => {
-    searchDisabled.value = lastSearched.value === searchTerm.value;
-    searchDisabled.value = !searchTerm.value;
-  });
+watch(searchTerm, () => {
+  searchDisabled.value = lastSearched.value === searchTerm.value;
+  searchDisabled.value = !searchTerm.value;
+});
 
-  function search() {
-    loading.value = true;
+function search() {
+  loading.value = true;
 
-    const params = new URLSearchParams();
-    params.append('userQuery', searchTerm.value);
-    params.append('page', page.value);
-    for (const [key, value] of Object.entries(remainingResults)) {
-      params.append(key, value > 0 ? true : '');
-    }
+  const params = new URLSearchParams();
+  params.append('userQuery', searchTerm.value);
+  params.append('page', page.value);
+  for (const [key, value] of Object.entries(remainingResults)) {
+    params.append(key, value > 0 ? true : '');
+  }
 
-    const sanitizeURL = `./api/sanitize.js?${params.toString()}`;
-    fetch(sanitizeURL)
-      .then((response) => response.json())
-      .then((json) => {
-        searchResults.value = searchResults.value ? searchResults.value.concat(json) : json;
-        loading.value = false;
-        allOut = false;
+  const sanitizeURL = `./api/sanitize.js?${params.toString()}`;
+  fetch(sanitizeURL)
+    .then((response) => response.json())
+    .then((json) => {
+      searchResults.value = searchResults.value ? searchResults.value.concat(json) : json;
+      loading.value = false;
+      allOut = false;
 
-        console.log(searchResults.value);
-
-        json.forEach((api) => {
-          remainingResults[api.value.api] = api.value.totalResults - (page.value * 24); //todo: per_page var?
-        });
-        for (const value of Object.values(remainingResults)) {
-          if (value > 0) break;
-          allOut = true;
-        }
+      json.forEach((api) => {
+        remainingResults[api.value.api] = api.value.totalResults - (page.value * 24); //todo: per_page var?
       });
-  }
-
-  function newSearch() {
-    page.value = 1;
-    searchResults.value = null;
-    searchDisabled.value = true;
-    lastSearched.value = searchTerm.value;
-    for (const key of Object.keys(remainingResults)) {
-      remainingResults[key] = Infinity;
-    }
-    search();
-  }
-
-  function scrollSearch() {
-    page.value++;
-    search();
-  }
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        observer.disconnect();
-        scrollSearch();
+      for (const value of Object.values(remainingResults)) {
+        if (value > 0) break;
+        allOut = true;
       }
     });
-  });
+}
 
-  watch(searchResults, () => {
-    if (allOut) return;
-    if (!searchResults.value) return;
-    const target = document.querySelector('.last-container .last-item');
-    observer.observe(target);
-  }, {
-    flush: 'post'
-  });
+function newSearch() {
+  page.value = 1;
+  searchResults.value = null;
+  searchDisabled.value = true;
+  lastSearched.value = searchTerm.value;
+  for (const key of Object.keys(remainingResults)) {
+    remainingResults[key] = Infinity;
+  }
+  search();
+}
 
+function scrollSearch() {
+  page.value++;
+  search();
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      observer.disconnect();
+      scrollSearch();
+    }
+  });
+});
+
+watch(searchResults, () => {
+  if (allOut) return;
+  if (!searchResults.value) return;
+  const target = document.querySelector('.last-container .last-item');
+  observer.observe(target);
+}, {
+  flush: 'post'
+});
+
+watch(activeItem, () => {
+  const modal = document.getElementById('modal');
+  if (activeItem.value) {
+    modal.showModal();
+  } else {
+    modal.close();
+  }
+});
 </script>
 
 <template>
@@ -97,30 +106,50 @@
 
   <SearchResults
     v-if="searchResults"
+    @setActive="(j, i) => activeItem = searchResults[j].value.photos[i]"
     :searchResults="searchResults"
   />
 
   <img v-if="loading" class="loader" src="./assets/spinner.png"/>
 
   <Modal
-    v-if="activeItem"
-    @close-modal="activeItem = null;"
-    :id="activeItem.id"
-    :smallURL="activeItem.smallURL"
-    :largeURL="activeItem.largeURL"
-    :user="activeItem.user"
-    :userProfile="activeItem.userProfile"
-    :userPic="activeItem.userPic"
-  >
-  </Modal>
+    @clearActive="() => activeItem = null"
+    :id="activeItem?.id"
+    :smallURL="activeItem?.smallURL"
+    :largeURL="activeItem?.largeURL"
+    :user="activeItem?.user"
+    :userProfile="activeItem?.userProfile"
+    :userPic="activeItem?.userPic"
+  />
 
 </template>
 
 <style scoped>
+  form {
+    padding: 2rem;
+  }
+
+  form > * {
+    font-size: 1rem;
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    min-width: 200px;
+    border: 1px solid white;
+    padding: .6rem 1.2rem;
+    margin: .2rem auto;
+    border-radius: 4px;
+  }
+
+  form button {
+    border-color: currentColor;
+  }
+
   .loader {
+    display: block;
     width: 50px;
     height: auto;
-    margin: 40px;
+    margin: 40px auto;
     animation: spin .75s linear infinite;
   }
 
