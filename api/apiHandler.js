@@ -8,6 +8,7 @@ export default (query) => {
       searches.push(funcObj[key](query.userQuery, query.page));
     }
   }
+
   return Promise.allSettled(searches).then((results) => results);
 }
 
@@ -63,15 +64,18 @@ const funcObj = {
     const response = await fetch(url, options);
     const json = await response.json();
   
+    console.log(json.photos[17]);
+
     const totalResults = json.total_results;
     const photos = json.photos.map((photo) => {
       return {
         id: photo.id,
         smallURL: photo.src.medium,
-        largeURL: photo.original,
+        largeURL: photo.src.original,
         user: photo.photographer,
         userProfile: photo.photographer_url,
         userPic: photo.userImageURL,
+        providerURL: photo.url,
       }
     });
   

@@ -16,6 +16,7 @@ const emits = defineEmits(['setActive']);
         <img
           v-bind:src="photo.smallURL"
           v-bind:class="i === api.value.photos.length - 1 ? 'last-item' : null"
+          v-bind:data-i="i"
         />
       </button>
 
@@ -38,6 +39,5 @@ const emits = defineEmits(['setActive']);
     height: 200px;
     width: 200px;
     object-fit: cover;
-    vertical-align: bottom;
   }
 </style>

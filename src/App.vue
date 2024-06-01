@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-import Modal from './components/modal.vue';
+import Modal from './components/Modal.vue';
 import SearchResults from './components/SearchResults.vue';
 
 // Search stuff
@@ -95,7 +95,14 @@ watch(activeItem, () => {
     modal.close();
   }
 });
+
+document.body.addEventListener('keyup', (e) => {
+  if (e.key !== 'Escape') return;
+  activeItem.value = null;
+});
+
 </script>
+
 
 <template>
 
@@ -113,7 +120,7 @@ watch(activeItem, () => {
   <img v-if="loading" class="loader" src="./assets/spinner.png"/>
 
   <Modal
-    @clearActive="() => activeItem = null"
+    @clearActive="activeItem = null"
     :id="activeItem?.id"
     :smallURL="activeItem?.smallURL"
     :largeURL="activeItem?.largeURL"

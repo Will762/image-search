@@ -24,5 +24,5 @@ Vite and Vercel provide a starting point and back-end for secrets, but everythin
 
 ## Why?
 
-1. I use a lot of placeholder images in my day job building front-ends, this app conveniently pulls several together for me
+1. I use a lot of placeholder images in my day job building front-ends, this app conveniently pulls several search engines together for me
 2. For fun
