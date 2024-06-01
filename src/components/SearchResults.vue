@@ -18,8 +18,8 @@ const emits = defineEmits(['setActive']);
           v-bind:class="i === api.value.photos.length - 1 ? 'last-item' : null"
         />
       </button>
+
     </span>
-    
   </div>
 </template>
 

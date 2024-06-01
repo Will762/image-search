@@ -147,10 +147,11 @@ watch(activeItem, () => {
 
   .loader {
     display: block;
-    width: 50px;
+    width: 40px;
     height: auto;
-    margin: 40px auto;
-    animation: spin .75s linear infinite;
+    margin: 20px auto;
+    animation: spin 1s linear infinite;
+    filter: contrast(.6);
   }
 
   @keyframes spin {
