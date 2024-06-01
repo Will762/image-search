@@ -1,5 +1,8 @@
 # Infinite Image Search app
 
+Deployed here:
+[https://image-search-beta.vercel.app/](https://image-search-beta.vercel.app/)
+
 ## What?
 
 This is an image searching app that returns free-to-use (upon condition of attribution) images from a number of provider APIs. At the moment those include:
@@ -9,7 +12,8 @@ This is an image searching app that returns free-to-use (upon condition of attri
 
 It's designed to be easily extensible to more providers. To do that one must simply:
 - Add a variable on the front-end that will add the provider into the search parameters of the fetch (this variable also keeps track of "remaining" results from the search, ensuring we don't a request a page of results that doesn't exist)
-- add the endpoint into the "back-end" (which is a Vercel serverless function, a node runtime environment)
+- add the API authorization key to vercel
+- add the endpoint into the "back-end" (which is a Vercel serverless function, a node runtime environment), along with the appropriate authorization key refernce from Vercel and method (header / param)
 - normalize the data sent to the front-end
 
 It has infinite scroll – for when you need to mainline cat content. 

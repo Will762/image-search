@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
-import Modal from './components/Modal.vue';
 import SearchResults from './components/SearchResults.vue';
+import Modal from './components/Modal.vue';
 
 // Search stuff
 let searchTerm = ref('');
