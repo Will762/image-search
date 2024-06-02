@@ -1,7 +1,8 @@
 <script setup>
 import { ref, watch } from 'vue';
+import Modal from './components/SearchResultsModal.vue';
 import SearchResults from './components/SearchResults.vue';
-import Modal from './components/Modal.vue';
+import SearchResultsModal from './components/SearchResultsModal.vue';
 
 // Search stuff
 let searchTerm = ref('');
@@ -119,7 +120,7 @@ document.body.addEventListener('keyup', (e) => {
 
   <img v-if="loading" class="loader" src="./assets/spinner.png"/>
 
-  <Modal
+  <SearchResultsModal
     @clearActive="activeItem = null"
     :id="activeItem?.id"
     :smallURL="activeItem?.smallURL"
