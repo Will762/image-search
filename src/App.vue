@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch } from 'vue';
-import Modal from './components/SearchResultsModal.vue';
 import SearchResults from './components/SearchResults.vue';
 import SearchResultsModal from './components/SearchResultsModal.vue';
 
@@ -22,8 +21,7 @@ let allOut = false;
 let activeItem = ref(null);
 
 watch(searchTerm, () => {
-  searchDisabled.value = lastSearched.value === searchTerm.value;
-  searchDisabled.value = !searchTerm.value;
+  searchDisabled.value = lastSearched.value === searchTerm.value || !searchTerm.value;
 });
 
 function search() {

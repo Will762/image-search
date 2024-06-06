@@ -12,7 +12,7 @@ const emits = defineEmits(['setActive']);
       <button
         v-for="(photo, i) in api.value.photos"
         @click="$emit('setActive', j, i)"
-        >
+      >
         <img
           v-bind:src="photo.smallURL"
           v-bind:class="i === api.value.photos.length - 1 ? 'last-item' : null"
