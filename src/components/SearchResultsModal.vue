@@ -54,7 +54,6 @@ const emits = defineEmits(['clearActive']);
   .close-modal {
     line-height: 1;
     font-size: 20px;
-    color: white;
     padding: 10px;
   }
 

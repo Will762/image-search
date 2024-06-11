@@ -141,7 +141,7 @@ document.body.addEventListener('keyup', (e) => {
     width: 100%;
     max-width: 320px;
     min-width: 200px;
-    border: 1px solid white;
+    border: 1px solid currentColor;
     padding: .6rem 1.2rem;
     margin: .2rem auto;
     border-radius: 4px;
