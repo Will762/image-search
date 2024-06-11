@@ -21,7 +21,7 @@ const emits = defineEmits(['clearActive']);
         target="_blank"
       >
         <img
-          class="displayImg"
+          class="display-img"
           :src="props.smallURL"
         >
       </a>
@@ -32,7 +32,7 @@ const emits = defineEmits(['clearActive']);
       >
         <p> {{ props.user }}</p>
         <img
-          class="profileImg"
+          class="profile-img"
           :src="props.userPic"
         >
       </a>
@@ -58,13 +58,14 @@ const emits = defineEmits(['clearActive']);
     padding: 10px;
   }
 
-  .displayImg {
+  .display-img {
     width: 100%;
   }
 
-  .profileImg {
+  .profile-img {
     max-width: 120px;
     max-height: 120px;
     object-fit: cover;
+    border-radius: 50%;
   }
 </style>
