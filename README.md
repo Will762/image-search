@@ -24,7 +24,7 @@ It has infinite scroll – for when you need to mainline cat content.
 - Vite
 - Vercel (Node.js runtime)
 
-Vite and Vercel provide a starting point and back-end for secrets, but everything else is handcrafted, avoiding excessive boilerplate, UI frameworks etc. I believe in keeping things pared back where possible. Vue.js provides a nice reactive framework, however, I use native browser APIs where I think that makes more sense. For example, the modal template uses a <dialog> element, where simply pointing a <div> with v-if at a variable is arguably easier, but worse for accessibility and maybe performance.
+Vite and Vercel provide a starting point and back-end for secrets, but everything else is handcrafted, avoiding excessive boilerplate, UI frameworks etc. I believe in keeping things pared back where possible. Vue.js provides a nice reactive framework, however, I use native browser APIs where I think that makes more sense. For example, the modal template uses a `<dialog>` element, where simply pointing a `<div>` with v-if at a variable is arguably easier, but worse for accessibility and maybe performance.
 
 ## Why?
 

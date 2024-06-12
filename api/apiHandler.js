@@ -9,7 +9,9 @@ export default (query) => {
     }
   }
 
-  return Promise.allSettled(searches).then((results) => results);
+  return Promise.allSettled(searches).then((results) => {
+    return results.filter((search) => search?.status === "fulfilled");
+  });
 }
 
 const funcObj = {
@@ -20,7 +22,7 @@ const funcObj = {
     url.searchParams.append('per_page', per_page);
   
     const headers = {
-      'Authorization': 'Client-ID ' + process.env.UNSPLASH_KEY,
+      'Authorization': `Client-ID ${process.env.UNSPLASH_KEY}`,
     };
     const options = {
       'headers': headers,

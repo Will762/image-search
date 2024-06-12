@@ -9,11 +9,5 @@ export default function handler(request, response) {
   sanitizedQuery.userQuery = sanitizedUserQuery;
 
   apiResponses(sanitizedQuery)
-  .then(data => response.json(data));
-
-
-  // to do ?
-  // } else {
-  //   return response.json({"msg": "You searched some nonsense"});
-  // }
+  .then((data) => response.json(data));
 }    
